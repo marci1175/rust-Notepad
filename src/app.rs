@@ -1,4 +1,5 @@
 use egui::Color32;
+use egui::color_picker::Alpha;
 use rfd::FileDialog;
 use std::fs::OpenOptions;
 use std::io::{Write, Read};
@@ -8,20 +9,25 @@ use std::fs::File;
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
-    // Example stuff:
+    // delete text left behind from previous session
+    #[serde(skip)]
     label: String,
 
-    // this how you opt-out of serialization of a member
-    #[serde(skip)]
+    window_open: bool,
     value: f32,
+    color: Color32,
+    rainbow: bool,
 }
 
 impl Default for TemplateApp {
     fn default() -> Self {
         Self {
             // Example stuff:
-            label: "Hello World!".to_owned(),
+            label: "".to_owned(),
             value: 2.7,
+            window_open: false,
+            rainbow: false,
+            color: Color32::from_rgb(255, 255, 255),
         }
     }
 }
@@ -40,6 +46,9 @@ impl TemplateApp {
         Default::default()
     }
 }
+
+
+
 impl eframe::App for TemplateApp {
     
     /// Called by the frame work to save state before shutdown.
@@ -53,12 +62,23 @@ impl eframe::App for TemplateApp {
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 
+        if self.window_open {
+            egui::Window::new("Settings")
+                .open(&mut self.window_open)
+                .show(ctx, |ui| {
+                    ui.checkbox(&mut self.rainbow, "Rainbow text");
+                    
+                    egui::color_picker::color_picker_color32(ui, &mut self.color, Alpha::Opaque);
+                    
+                });
+        }
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
         // Tip: a good default choice is to just keep the `CentralPanel`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
-
-        //_frame.close();
+        if self.rainbow{
+            //rainbow insert here
+        }
         
 
         #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
@@ -66,9 +86,7 @@ impl eframe::App for TemplateApp {
             // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
                 ui.label("📋 Notes");
-                if ui.button("Settings").clicked() {
-
-                }
+                
                 if ui.button("Save As").clicked() {
                     //save as
                     let files = FileDialog::new()
@@ -112,6 +130,10 @@ impl eframe::App for TemplateApp {
                             self.label = contents;
                         }
                 }
+                if ui.button("Settings").clicked() {
+                    self.window_open = true;
+                    
+                }
             });
         });
         
@@ -121,14 +143,14 @@ impl eframe::App for TemplateApp {
             //let desired_lenght:usize = 100;
             
             
-
-            ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| {
-                ui.add(egui::TextEdit::multiline(&mut self.label)
-                    .text_color(Color32::from_rgb(255, 255, 255))
+            egui::ScrollArea::vertical().show(ui, |ui| {
+                ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| {
+                    ui.add_sized(ui.available_size(), egui::TextEdit::multiline(&mut self.label)
+                    .text_color(self.color)
                     .desired_rows(32));
-                
-            
+                });
             });
+            
             
             
             egui::warn_if_debug_build(ui);
