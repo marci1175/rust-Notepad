@@ -44,14 +44,15 @@ impl eframe::App for TemplateApp {
     
     /// Called by the frame work to save state before shutdown.
     fn save(&mut self, storage: &mut dyn eframe::Storage) {
+        
         eframe::set_value(storage, eframe::APP_KEY, self);
+        
     }
 
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
 
-        self.label.clear();
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
         // Tip: a good default choice is to just keep the `CentralPanel`.
@@ -65,9 +66,8 @@ impl eframe::App for TemplateApp {
             // The top panel is often a good place for a menu bar:
             egui::menu::bar(ui, |ui| {
                 ui.label("📋 Notes");
-                if ui.button("Save").clicked() {
-                    //save
-                    
+                if ui.button("Settings").clicked() {
+
                 }
                 if ui.button("Save As").clicked() {
                     //save as
@@ -83,7 +83,9 @@ impl eframe::App for TemplateApp {
                             .write(true)
                             .open(file_path)
                             .expect("Failed to open file");
-                
+                        
+                        //pushback info
+
                         // Write some data to the file
                         match write!(file ,"{}", self.label){
                             Ok(_) => {},
