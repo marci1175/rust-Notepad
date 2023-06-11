@@ -1,1 +1,1 @@
-This is a very simple notepad by me!!!
+This is a very simple notepad
