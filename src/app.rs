@@ -13,11 +13,12 @@ pub struct TemplateApp {
     // delete text left behind from previous session
     #[serde(skip)]
     label: String,
-
-    window_open: bool,
-    emoji_window_open: bool,
-    value: f32,
     #[serde(skip)]
+    window_open: bool,
+    #[serde(skip)]
+    emoji_window_open: bool,
+
+    value: f32,
     color: Color32,
     rainbow: bool,
     font_size: f32,
