@@ -161,11 +161,15 @@ impl eframe::App for TemplateApp {
         //bottom
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
             egui::menu::bar(ui, |ui|{
-                //lines characters
                 let lenght = self.label.len();
                 let lines = count_lines(&self.label);
                 let final_lenght = lenght - (lines - 1);
                 ui.label(lines.to_string() + " : Lines");
+
+                //separate self.label into a vector by whitespaces, then count them
+                let trimmed_string = self.label.trim();
+                let words: Vec<&str> = trimmed_string.split_whitespace().collect();
+                ui.label(words.len().to_string() + " : Words");
                 ui.label(final_lenght.to_string() + " : Characters");
                 //emoji button
                 if ui.button("Show emojis").clicked() {
@@ -236,8 +240,6 @@ impl eframe::App for TemplateApp {
                     ui.add_sized(ui.available_size(), egui::TextEdit::multiline(&mut self.label)
                         .text_color(self.color)
                         .font(egui::FontId::proportional(self.font_size)));
-                                          
-                    
                 });
             });
         });
