@@ -229,6 +229,11 @@ impl eframe::App for TemplateApp {
                     let files = FileDialog::new()
                         .set_title("Save")
                         .add_filter("", &["txt"])
+                        .add_filter("", &["text"])
+                        .add_filter("", &["py"])
+                        .add_filter("", &["rs"])
+                        .add_filter("", &["cpp"])
+                        .add_filter("", &["c"])
                         .set_directory("/")
                         .save_file();
 
@@ -255,6 +260,7 @@ impl eframe::App for TemplateApp {
                     let files = FileDialog::new()
                         .set_title("Open")
                         .set_directory("/")
+                        .add_filter("", &["txt","rs","cpp","c","cs","java","h","ccx","py"])
                         .pick_file();
                     //START
                     if let Some(file_path) = files {
